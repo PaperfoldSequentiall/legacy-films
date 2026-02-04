@@ -2,94 +2,117 @@ import { useEffect, useRef, useState } from "react";
 
 // Hero Videos
 const HERO_VIDEOS = {
-	en: "https://res.cloudinary.com/djhfark2q/video/upload/v1770120742/en_01_vurigj.mp4",
-
-	hi: "https://res.cloudinary.com/djhfark2q/video/upload/v1770121308/hi_01_hmbo5b.mp4",
+  en: "https://res.cloudinary.com/djhfark2q/video/upload/v1770120742/en_01_vurigj.mp4",
+  hi: "https://res.cloudinary.com/djhfark2q/video/upload/v1770121308/hi_01_hmbo5b.mp4",
 };
 
 function HeroVideo({ onEnd }) {
-	const videoRef = useRef(null);
+  const videoRef = useRef(null);
 
-	const [ended, setEnded] = useState(false);
-	const [loading, setLoading] = useState(true);
-	const [lang, setLang] = useState("en");
+  const [ended, setEnded] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [lang, setLang] = useState("en");
 
-	/* -------- LOADER (5s) -------- */
+  const [soundUnlocked, setSoundUnlocked] = useState(false);
 
-	useEffect(() => {
-		const timer = setTimeout(() => {
-			setLoading(false);
+  /* -------- LOADER -------- */
 
-			const v = videoRef.current;
-			if (v) {
-				v.playbackRate = 0.85;
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoading(false);
+      tryPlay();
+    }, 5000);
 
-				// Start muted (required for autoplay)
-				v.muted = true;
+    return () => clearTimeout(timer);
+  }, []);
 
-				v.play()
-					.then(() => {
-						// Unmute after play starts
-						v.muted = false;
-					})
-					.catch(() => {});
-			}
-		}, 5000);
+  /* -------- TRY PLAY -------- */
 
-		return () => clearTimeout(timer);
-	}, []);
+  const tryPlay = () => {
+    const v = videoRef.current;
+    if (!v) return;
 
-	/* -------- CHANGE VIDEO ON LANGUAGE SWITCH -------- */
+    v.playbackRate = 0.85;
 
-	useEffect(() => {
-		const v = videoRef.current;
-		if (!v || loading) return;
+    // Always start muted
+    v.muted = !soundUnlocked;
 
-		v.pause();
-		v.load();
-		v.play().catch(() => {});
-	}, [lang, loading]);
+    v.play().catch(() => {
+      // Autoplay blocked
+    });
+  };
 
-	return (
-		<section className='section hero'>
-			{/* Video */}
-			<video
-				ref={videoRef}
-				src={HERO_VIDEOS[lang]}
-				playsInline
-				preload='auto'
-				muted={false}
-				onEnded={() => {
-					setEnded(true);
-					onEnd();
-				}}
-			/>
+  /* -------- ON LANGUAGE CHANGE -------- */
 
-			{/* Language Switch */}
-			{!loading && !ended && (
-				<div className='hero-lang'>
-					<button onClick={() => setLang((p) => (p === "en" ? "hi" : "en"))}>
-						{lang === "en" ? "हिंदी" : "EN"}
-					</button>
-				</div>
-			)}
+  useEffect(() => {
+    if (!loading) {
+      tryPlay();
+    }
+  }, [lang, loading, soundUnlocked]);
 
-			{/* Loader */}
-			{loading && (
-				<div className='loader-screen'>
-					<div className='loader-ring'></div>
-					<p className='loader-text'>Loading Experience...</p>
-				</div>
-			)}
+  /* -------- UNLOCK SOUND -------- */
 
-			{/* Black Overlay After End */}
-			{ended && !loading && (
-				<div className='hero-overlay'>
-					<p className='scroll-text'>Scroll Down ↓</p>
-				</div>
-			)}
-		</section>
-	);
+  const enableSound = () => {
+    const v = videoRef.current;
+    if (!v) return;
+
+    v.muted = false;
+    v.play();
+
+    setSoundUnlocked(true);
+  };
+
+  return (
+    <section className="section hero" onClick={!soundUnlocked ? enableSound : undefined}>
+
+      {/* Video */}
+      <video
+        ref={videoRef}
+        src={HERO_VIDEOS[lang]}
+        playsInline
+        preload="auto"
+        muted={!soundUnlocked}
+        onEnded={() => {
+          setEnded(true);
+          onEnd();
+        }}
+      />
+
+      {/* Click To Enable Sound */}
+      {!soundUnlocked && !loading && !ended && (
+        <div className="hero-overlay">
+          <p className="scroll-text">
+            Tap to Start 🔊
+          </p>
+        </div>
+      )}
+
+      {/* Language Switch */}
+      {!loading && !ended && (
+        <div className="hero-lang">
+          <button onClick={() => setLang((p) => (p === "en" ? "hi" : "en"))}>
+            {lang === "en" ? "हिंदी" : "EN"}
+          </button>
+        </div>
+      )}
+
+      {/* Loader */}
+      {loading && (
+        <div className="loader-screen">
+          <div className="loader-ring"></div>
+          <p className="loader-text">Loading Experience...</p>
+        </div>
+      )}
+
+      {/* End Overlay */}
+      {ended && !loading && (
+        <div className="hero-overlay">
+          <p className="scroll-text">Scroll Down ↓</p>
+        </div>
+      )}
+
+    </section>
+  );
 }
 
 export default HeroVideo;
