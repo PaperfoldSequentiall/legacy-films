@@ -3,7 +3,7 @@
 export const englishVideos = [
   "https://res.cloudinary.com/djhfark2q/video/upload/v1770120742/en_01_vurigj.mp4",
   "https://res.cloudinary.com/djhfark2q/video/upload/v1770120761/en_02_ugtnhz.mp4",
-  "https://res.cloudinary.com/djhfark2q/video/upload/v1770120804/en_03_ydbz5f.mp4",
+  "https://res.cloudinary.com/djhfark2q/video/upload/v1770197974/en_03_u99dnh.mp4",
   "https://res.cloudinary.com/djhfark2q/video/upload/v1770120809/en_04_bcyti0.mp4",
   "https://res.cloudinary.com/djhfark2q/video/upload/v1770120809/en_05_mkqmcq.mp4",
   "https://res.cloudinary.com/djhfark2q/video/upload/v1770120811/en_06_mihpzj.mp4",
@@ -31,7 +31,7 @@ export const englishVideos = [
 export const hindiVideos = [
   "https://res.cloudinary.com/djhfark2q/video/upload/v1770121308/hi_01_hmbo5b.mp4",
   "https://res.cloudinary.com/djhfark2q/video/upload/v1770121319/hi_02_den9jm.mp4",
-  "https://res.cloudinary.com/djhfark2q/video/upload/v1770121335/hi_03_mgduot.mp4",
+  "https://res.cloudinary.com/djhfark2q/video/upload/v1770197982/hi_03_tdozua.mp4",
   "https://res.cloudinary.com/djhfark2q/video/upload/v1770121349/hi_04_p3vtly.mp4",
   "https://res.cloudinary.com/djhfark2q/video/upload/v1770121337/hi_05_lhwbda.mp4",
   "https://res.cloudinary.com/djhfark2q/video/upload/v1770121329/hi_06_lotnqw.mp4",
