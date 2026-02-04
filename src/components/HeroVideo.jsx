@@ -2,94 +2,94 @@ import { useEffect, useRef, useState } from "react";
 
 // Hero Videos
 const HERO_VIDEOS = {
-  en: "https://res.cloudinary.com/djhfark2q/video/upload/v1770120742/en_01_vurigj.mp4",
+	en: "https://res.cloudinary.com/djhfark2q/video/upload/v1770120742/en_01_vurigj.mp4",
 
-  hi: "https://res.cloudinary.com/djhfark2q/video/upload/v1770121308/hi_01_hmbo5b.mp4",
+	hi: "https://res.cloudinary.com/djhfark2q/video/upload/v1770121308/hi_01_hmbo5b.mp4",
 };
 
 function HeroVideo({ onEnd }) {
-  const videoRef = useRef(null);
+	const videoRef = useRef(null);
 
-  const [ended, setEnded] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [lang, setLang] = useState("en");
+	const [ended, setEnded] = useState(false);
+	const [loading, setLoading] = useState(true);
+	const [lang, setLang] = useState("en");
 
-  /* -------- LOADER (5s) -------- */
+	/* -------- LOADER (5s) -------- */
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setLoading(false);
+	useEffect(() => {
+		const timer = setTimeout(() => {
+			setLoading(false);
 
-      const v = videoRef.current;
-      if (v) {
-        v.playbackRate = 0.85;
-        v.muted = false; // sound ON
-        v.play().catch(() => {});
-      }
-    }, 5000);
+			const v = videoRef.current;
+			if (v) {
+				v.playbackRate = 0.85;
 
-    return () => clearTimeout(timer);
-  }, []);
+				// Start muted (required for autoplay)
+				v.muted = true;
 
-  /* -------- CHANGE VIDEO ON LANGUAGE SWITCH -------- */
+				v.play()
+					.then(() => {
+						// Unmute after play starts
+						v.muted = false;
+					})
+					.catch(() => {});
+			}
+		}, 5000);
 
-  useEffect(() => {
-    const v = videoRef.current;
-    if (!v || loading) return;
+		return () => clearTimeout(timer);
+	}, []);
 
-    v.pause();
-    v.load();
-    v.play().catch(() => {});
-  }, [lang, loading]);
+	/* -------- CHANGE VIDEO ON LANGUAGE SWITCH -------- */
 
-  return (
-    <section className="section hero">
+	useEffect(() => {
+		const v = videoRef.current;
+		if (!v || loading) return;
 
-      {/* Video */}
-      <video
-        ref={videoRef}
-        src={HERO_VIDEOS[lang]}
-        playsInline
-        preload="auto"
-        muted={false}
-        onEnded={() => {
-          setEnded(true);
-          onEnd();
-        }}
-      />
+		v.pause();
+		v.load();
+		v.play().catch(() => {});
+	}, [lang, loading]);
 
-      {/* Language Switch */}
-      {!loading && !ended && (
-        <div className="hero-lang">
+	return (
+		<section className='section hero'>
+			{/* Video */}
+			<video
+				ref={videoRef}
+				src={HERO_VIDEOS[lang]}
+				playsInline
+				preload='auto'
+				muted={false}
+				onEnded={() => {
+					setEnded(true);
+					onEnd();
+				}}
+			/>
 
-          <button
-            onClick={() =>
-              setLang((p) => (p === "en" ? "hi" : "en"))
-            }
-          >
-            {lang === "en" ? "हिंदी" : "EN"}
-          </button>
+			{/* Language Switch */}
+			{!loading && !ended && (
+				<div className='hero-lang'>
+					<button onClick={() => setLang((p) => (p === "en" ? "hi" : "en"))}>
+						{lang === "en" ? "हिंदी" : "EN"}
+					</button>
+				</div>
+			)}
 
-        </div>
-      )}
+			{/* Loader */}
+			{loading && (
+				<div className='loader-screen'>
+					<div className='loader-ring'></div>
+					<p className='loader-text'>Loading Experience...</p>
+				</div>
+			)}
 
-      {/* Loader */}
-      {loading && (
-        <div className="loader-screen">
-          <div className="loader-ring"></div>
-          <p className="loader-text">Loading Experience...</p>
-        </div>
-      )}
-
-      {/* Black Overlay After End */}
-      {ended && !loading && (
-        <div className="hero-overlay">
-          <p className="scroll-text">Scroll Down ↓</p>
-        </div>
-      )}
-
-    </section>
-  );
+			{/* Black Overlay After End */}
+			{ended && !loading && (
+				<div className='hero-overlay'>
+					<p className='scroll-text'>Scroll Down ↓</p>
+				</div>
+			)}
+		</section>
+	);
 }
 
 export default HeroVideo;
